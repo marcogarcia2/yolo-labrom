@@ -1,3 +1,7 @@
-**/dataset/
 **/.DS_Store
-course/
+**/dataset/
+**/images/
+**/labels/
+**/masks/
+**/__pycache__/
+**transcg*
