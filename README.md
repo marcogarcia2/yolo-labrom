@@ -7,7 +7,7 @@ All the required libs are fully installed in the environment. The notebook is al
 
 Activating the environment
 ```shell
-source pytorch_env/bin/activate
+source yolo_env/bin/activate
 ```
 
 Deactivating the environment
