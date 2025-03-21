@@ -3,5 +3,5 @@
 **/images/
 **/labels/
 **/masks/
+**/runs/
 **/__pycache__/
-**transcg*
