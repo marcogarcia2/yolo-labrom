@@ -44,18 +44,48 @@ This project aims to evaluate how YOLO (You Only Look Once), a deep learning obj
 
 The dataset chosen for this project is Trans10K by Xie et al. [1]. It consists of 10,428 images of transparent objects and surfaces, including items such as cups, bowls, windows, doors, walls, and more. Additional information about the dataset and the project can be found on the [project's GitHub page](https://github.com/xieenze/Segment_Transparent_Objects).
 
-| ![Image 1](photos/4.jpg) | ![Image 2](photos/43.jpg) | ![Image 3](photos/11.jpg) |
-|----------------------------|----------------------------|----------------------------|
-| ![Image 4](photos/10282.jpg) | ![Image 5](photos/57.jpg) | ![Image 6](photos/6081.jpg) |
-|----------------------------|----------------------------|----------------------------|
-| ![Image 7](photos/2670.jpg) | ![Image 8](photos/5735.jpg) | ![Image 9](photos/2.jpg) |
+<table align="center" style="border-collapse: collapse;">
+  <tr>
+    <td style="padding: 0;">
+      <img src="photos/4.jpg" width="250" style="display: block; border: none; margin: 0;">
+    </td>
+    <td style="padding: 0;">
+      <img src="photos/43.jpg" width="250" style="display: block; border: none; margin: 0;">
+    </td>
+    <td style="padding: 0;">
+      <img src="photos/11.jpg" width="250" style="display: block; border: none; margin: 0;">
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 0;">
+      <img src="photos/10282.jpg" width="250" style="display: block; border: none; margin: 0;">
+    </td>
+    <td style="padding: 0;">
+      <img src="photos/57.jpg" width="250" style="display: block; border: none; margin: 0;">
+    </td>
+    <td style="padding: 0;">
+      <img src="photos/6081.jpg" width="250" style="display: block; border: none; margin: 0;">
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 0;">
+      <img src="photos/2670.jpg" width="250" style="display: block; border: none; margin: 0;">
+    </td>
+    <td style="padding: 0;">
+      <img src="photos/5735.jpg" width="250" style="display: block; border: none; margin: 0;">
+    </td>
+    <td style="padding: 0;">
+      <img src="photos/2.jpg" width="250" style="display: block; border: none; margin: 0;">
+    </td>
+  </tr>
+</table>
 
 <p style="text-align: center;">Some images of the Trans10K dataset showing different examples of transparent objects and surfaces.</p>
 
 
 ### Workflow 
 
-
+Describe workflow here.
 
 
 
