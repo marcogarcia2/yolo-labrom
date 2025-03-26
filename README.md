@@ -82,6 +82,7 @@ The dataset chosen for this project is Trans10K by Xie et al. [1]. It consists o
 
 <p style="text-align: center;">Some images of the Trans10K dataset showing different examples of transparent objects and surfaces.</p>
 
+## YOLO: The State of the Art in Computer Vision
 
 ### Workflow 
 
