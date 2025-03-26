@@ -5,7 +5,7 @@ import random
 import matplotlib.pyplot as plt
     
 
-def generate_yolo_annotation(masks_paths: list, labels_path: str, class_id: int=0, epsilon: float=7.0):
+def generate_yolo_annotation(masks_paths: list, labels_path: str, class_id: int=0, epsilon: float=3.0):
     
     """
     Given a list of masks paths, generate YOLO annotations for segmentation and saves them in an output folder.
