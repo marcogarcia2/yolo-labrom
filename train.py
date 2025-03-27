@@ -12,7 +12,7 @@ def main():
 
     model_name = ""
     while True:
-        version = input()
+        version = input("Type n or s: ")
         if version in ['n', 'N']:
             model_name = "yolo11n-seg.pt"
             break
@@ -32,7 +32,7 @@ def main():
     # Training model on dataset
     model.train(data="dataset/data.yaml", epochs=EPOCHS, batch=BATCH_SIZE, imgsz=IMG_SIZE, patience=PATIENCE)
 
-    model = YOLO("runs/segment/train/weights/best.pt", exist_ok=True)  # carrega o best
+    model = YOLO("runs/segment/train/weights/best.pt")  # carrega o best
     save_name = "models/" + model_name[:-3] + "-trained.pt"
     model.save(save_name)
 
