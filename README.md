@@ -93,14 +93,20 @@ Describe workflow here.
 
 
 ## Python Environment
-All the required libs are fully installed in the environment. The notebook is already synced with it.
 
-Activating the environment
+To set up the environment needed:
+
 ```shell
+python3 -m venv yolo_env
 source yolo_env/bin/activate
 ```
 
-Deactivating the environment
+Installing all dependencies needed:
+```shell
+pip install -r requirements.txt
+```
+
+Exiting the environment:
 ```shell
 deactivate
 ```
