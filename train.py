@@ -10,8 +10,20 @@ def main():
     PATIENCE = 10
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+    model_name = ""
+    while True:
+        version = input()
+        if version in ['n', 'N']:
+            model_name = "yolo11n-seg.pt"
+            break
+        elif version in ['s', 'S']:
+            model_name = "yolo11n-seg.pt"
+            break
+        else:
+            print("Invalid entry.")
+
     # Downloading our model
-    model = YOLO("yolo11s-seg.pt")
+    model = YOLO(model_name)
 
     # Using GPU if it is available
     model.to(device)
@@ -20,8 +32,9 @@ def main():
     # Training model on dataset
     model.train(data="dataset/data.yaml", epochs=EPOCHS, batch=BATCH_SIZE, imgsz=IMG_SIZE, patience=PATIENCE)
 
-    # Salvar o modelo treinado
-    model.save("models/yolo11n-seg_trained_0.pt")
+    model = YOLO("runs/segment/train/weights/best.pt", exist_ok=True)  # carrega o best
+    save_name = "models/" + model_name[:-3] + "-trained.pt"
+    model.save(save_name)
 
 if __name__ == "__main__":
     main()
