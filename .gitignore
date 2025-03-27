@@ -5,4 +5,5 @@
 **/masks/
 **/runs/
 **/__pycache__/
+**/yolo_env/
 Icon*
