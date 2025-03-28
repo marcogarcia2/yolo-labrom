@@ -17,7 +17,7 @@ def main():
             model_name = "yolo11n-seg.pt"
             break
         elif version in ['s', 'S']:
-            model_name = "yolo11n-seg.pt"
+            model_name = "yolo11s-seg.pt"
             break
         else:
             print("Invalid entry.")
