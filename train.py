@@ -3,11 +3,7 @@ import torch
 import os
 
 def main():
-    # Hyperparameters
-    EPOCHS = 50
-    BATCH_SIZE = 8
-    IMG_SIZE = 640
-    PATIENCE = 10
+
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     model_name = ""
@@ -30,7 +26,16 @@ def main():
     print(f"The model is at {device}.")
 
     # Training model on dataset
-    model.train(data="dataset/data.yaml", epochs=EPOCHS, batch=BATCH_SIZE, imgsz=IMG_SIZE, patience=PATIENCE)
+    model.train(
+    data="dataset/data.yaml",     # caminho do seu arquivo data
+    epochs=100,           # número máximo de épocas
+    patience=10,          # early stopping: para se não melhorar por 10 épocas
+    batch=16,             # tamanho de batch
+    imgsz=640,            # resolução das imagens
+    lr0=0.001,            # learning rate inicial
+    project="runs/train", # pasta onde serão salvos os resultados
+    name="exp",           # nome do experimento
+)
 
     model = YOLO("runs/segment/train/weights/best.pt")  # carrega o best
     save_name = "models/" + model_name[:-3] + "-trained.pt"
