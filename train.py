@@ -41,5 +41,7 @@ def main():
     save_name = "models/" + model_name[:-3] + "-trained.pt"
     model.save(save_name)
 
+    os.remove(model_name)
+
 if __name__ == "__main__":
     main()
