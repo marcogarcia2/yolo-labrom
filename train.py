@@ -15,6 +15,7 @@ def train_model(model_name: str, device: str):
     save_folder = "runs/train_"  + model_name[6] # char 's; or 'n'
 
     # Training model based on these hyperparameters
+    
     model.train(
         data="dataset/data.yaml",   # caminho do seu arquivo data
         epochs=100,                 # número máximo de épocas
@@ -25,9 +26,9 @@ def train_model(model_name: str, device: str):
         project=save_folder,        # pasta onde serão salvos os resultados
         name="exp",                 # nome do experimento
     )
-
+    
     # Saving our trained model in models folder
-    model = YOLO(save_folder + "/weights/best.pt")  # carrega o best
+    model = YOLO(save_folder + "/exp/weights/best.pt")  # carrega o best
     save_name = "models/" + model_name[:-3] + "-trained.pt"
     model.save(save_name)
 
