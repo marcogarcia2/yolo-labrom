@@ -18,8 +18,8 @@ def train_model(model_name: str, device: str):
     
     model.train(
         data="dataset/data.yaml",   # caminho do seu arquivo data
-        epochs=100,                 # número máximo de épocas
-        patience=10,                # early stopping: para se não melhorar por 10 épocas
+        epochs=300,                 # número máximo de épocas
+        patience=50,                # early stopping: para se não melhorar por 10 épocas
         batch=16,                   # tamanho de batch
         imgsz=640,                  # resolução das imagens
         lr0=0.001,                  # learning rate inicial
