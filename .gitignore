@@ -6,3 +6,7 @@
 **/__pycache__/
 **/yolo_env/
 Icon*
+
+# my_test_images/
+# predict_n/
+# predict_s/
