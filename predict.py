@@ -27,7 +27,7 @@ def main():
     source = "my_test_images/"
     
     # Using custom function to make predictions with our trained model N on the available device
-    make_predictions("models/yolo11n-seg-trained.pt", source, device)
+    #make_predictions("models/yolo11n-seg-trained.pt", source, device)
     
     # Same for model S
     make_predictions("models/yolo11s-seg-trained.pt", source, device)

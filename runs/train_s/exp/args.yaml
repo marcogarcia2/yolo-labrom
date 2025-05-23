@@ -2,9 +2,9 @@ task: segment
 mode: train
 model: yolo11s-seg.pt
 data: dataset/data.yaml
-epochs: 100
+epochs: 300
 time: null
-patience: 10
+patience: 50
 batch: 16
 imgsz: 640
 save: true
