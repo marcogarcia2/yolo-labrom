@@ -45,7 +45,6 @@ def generate_yolo_annotation(masks_paths: list, labels_path: str, class_id: int=
             with open(os.path.join(labels_path, label_name), "a") as f:
                 f.write(annotation)
 
-    
 
 def polygon_visual_inspection(images_folder: str, labels_folder: str, n: int=5):
     
@@ -103,54 +102,112 @@ def polygon_visual_inspection(images_folder: str, labels_folder: str, n: int=5):
         plt.show()
 
 
-
-
-def resize_with_padding(img: np.array, target_size: int=640):
-    """"
-    Resizes the image with padding, in order to preserve proportions.
+def concat_videos(path1: str, path2: str):
     """
-    h, w, _ = img.shape 
-    scale = target_size / max(w, h) 
-    new_w, new_h = int(w * scale), int(h * scale)
-
-    img_resized = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
-
-    pad_w = (target_size - new_w) // 2
-    pad_h = (target_size - new_h) // 2
-
-    img_padded = np.zeros((target_size, target_size, 3), dtype=np.uint8)
-    img_padded[pad_h:pad_h+new_h, pad_w:pad_w+new_w] = img_resized
-
-    return img_padded
-
-
-def resize_all_with_padding(origin_path: str, dest_path: str, size: int):
-    """"
-    Resizes with padding all images in given directories.
+    From 2 video paths, load and concatenate into a single video.
     """
-    # Resizing all images
-    for img_name in os.listdir(origin_path):
-        if img_name.endswith((".jpg", ".png", ".jpeg")):
-            img_path = os.path.join(origin_path, img_name)
-            img = cv2.imread(img_path)
 
-            if img is not None:
-                # img_new = cv2.resize(img, (640, 640), interpolation=cv2.INTER_LINEAR) # without padding
-                img_new = resize_with_padding(img, size)
-                cv2.imwrite(os.path.join(dest_path, img_name), img_new)
-
-
-def rename_all(dest_path: str, masks: bool=False):
-    """
-    Renames all files in a directory in ascending order.
-    """
-    images = sorted([f for f in os.listdir(dest_path) if f.endswith((".jpg", ".png", ".jpeg"))])
-
-    for i, img_name in enumerate(images, start=1):
-        ext = os.path.splitext(img_name)[1]
-        new_name = f"{i:05d}{ext}" if masks == False else f"mask_{i:05d}{ext}"
+    # Private helper function that concatenates each frame individually
+    def concat_frame(frame1, width1:int, frame2, width2:int, width:int, height:int, bar:int):
         
-        old_path = os.path.join(dest_path, img_name)
-        new_path = os.path.join(dest_path, new_name)
+        # Creating a black (empty) frame
+        frame = np.zeros((height, width, 3), dtype=np.uint8)
+
+        # Coloring the namebar
+        gray = (50,50,50)
+        frame[0:bar, 0:width] = gray
+
+        # Writing frame 1 at the left and frame 2 at the right
+        frame[bar:bar+height1, 0:width1] = frame1
+        frame[bar:bar+height2, width1:width1+width2] = frame2
         
-        os.rename(old_path, new_path)
+        # Text parameters
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 2
+        color = (255,255,255)
+        thickness = 2
+
+        name1 = "yolo11n"
+        name2 = "yolo11s"
+
+        cv2.putText(frame, name1, (0, bar//2), font, font_scale, color, thickness)
+        cv2.putText(frame, name2, (width1, bar//2), font, font_scale, color, thickness)
+
+        return frame
+
+
+    cap1 = cv2.VideoCapture(path1)
+    if not cap1.isOpened():
+        print(f"Erro ao abrir o arquivo de vídeo: {path1}")
+        exit()
+
+    cap2 = cv2.VideoCapture(path2)
+    if not cap2.isOpened():
+        print(f"Erro ao abrir o arquivo de vídeo: {path2}")
+        exit()
+
+    
+    # Getting info about video1
+    fps1 = cap1.get(cv2.CAP_PROP_FPS)
+    width1 = int(cap1.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height1 = int(cap1.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    total_frames1 = int(cap1.get(cv2.CAP_PROP_FRAME_COUNT)) # Opcional, para mostrar progresso
+    print(f"Video 1: {width1}x{height1} @ {fps1:.2f} FPS, Total frames: {total_frames1}")
+    
+    # Getting info about video2
+    fps2 = cap2.get(cv2.CAP_PROP_FPS)
+    width2 = int(cap2.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height2 = int(cap2.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    total_frames2 = int(cap2.get(cv2.CAP_PROP_FRAME_COUNT)) # Opcional, para mostrar progresso
+    print(f"Video 2: {width2}x{height2} @ {fps2:.2f} FPS, Total frames: {total_frames2}")
+
+    if fps1 != fps2: 
+        print(f"Error: both videos must have the same FPS ({fps1} and {fps2}).")
+        exit()
+
+
+    # Creating directory or ignoring if it already exists
+    try:
+        os.makedirs("out", exist_ok=True)
+    except OSError as e:
+        print(f"Erro ao criar o diretório 'out': {e}")
+
+    # Creating the file name
+    basename = os.path.basename(path1)
+    out_path = "out/mergerd_" + basename
+
+    # Removing previous video
+    if os.path.exists(out_path):
+        try:
+            os.remove(out_path)
+        except OSError as e:
+            print(f"Erro ao remover o vídeo anterior '{out_path}': {e}")
+
+    # Output video parameters
+    bar = 100
+    width = width1 + width2
+    height = max(height1, height2) + bar
+    fps = fps1
+    fourcc = cv2.VideoWriter_fourcc(*'avc1') # Tente este para H.264
+    out = cv2.VideoWriter(out_path, fourcc, fps, (width, height))
+
+    # While loop that join and save frames 
+    while cap1.isOpened() and cap2.isOpened():
+        
+        ret1, frame1 = cap1.read()        
+        ret2, frame2 = cap2.read()        
+
+        if not ret1 or not ret2:
+            print("Successfully concatenated both videos.")
+            break
+
+        joined_frame = concat_frame(frame1, width1, frame2, width2, width, height, bar)
+        if out is not None:
+            out.write(joined_frame)
+
+    cap1.release()
+    cap2.release()
+    if out is not None:
+        out.release()
+
+    return out_path

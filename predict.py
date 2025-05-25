@@ -6,6 +6,8 @@ def make_predictions(model_path: str, source: str, device: str):
     # Loading model from path
     model = YOLO(model_path)
     model.to(device)
+
+    confidence_threshold = 0.5
     
     # Predictions
     results = model.predict(
@@ -14,7 +16,8 @@ def make_predictions(model_path: str, source: str, device: str):
         save_txt=True,
         project="runs",                         
         name="predict_" + model_path[13],       
-        exist_ok=True                              
+        exist_ok=True,
+        conf=confidence_threshold          
     )
 
 
@@ -27,7 +30,7 @@ def main():
     source = "my_test_images/"
     
     # Using custom function to make predictions with our trained model N on the available device
-    #make_predictions("models/yolo11n-seg-trained.pt", source, device)
+    make_predictions("models/yolo11n-seg-trained.pt", source, device)
     
     # Same for model S
     make_predictions("models/yolo11s-seg-trained.pt", source, device)
