@@ -38,11 +38,11 @@ Autonomous robots rely on various sensors to navigate their environment safely. 
   </a>
 </p>
 
-This project aims to evaluate how YOLO (You Only Look Once), a deep learning object detection model, performs in segmenting transparent surfaces. The goal is to integrate YOLO's capabilities with LiDAR to enhance the robot’s navigation system, enabling it to better detect and avoid transparent obstacles.
+This project aims to evaluate how YOLO (You Only Look Once), a deep learning real-time object detection model [1], performs in segmenting transparent surfaces. The goal is to integrate YOLO's capabilities with LiDAR to enhance the robot’s navigation system, enabling it to better detect and avoid transparent obstacles.
 
 ### Dataset
 
-The dataset chosen for this project is Trans10K by Xie et al. [1]. It consists of 10,428 images of transparent objects and surfaces, including items such as cups, bowls, windows, doors, walls, and more. Additional information about the dataset and the project can be found on the [project's GitHub page](https://github.com/xieenze/Segment_Transparent_Objects).
+The dataset chosen for this project is Trans10K by Xie et al. [2]. It consists of 10,428 images of transparent objects and surfaces, including items such as cups, bowls, windows, doors, walls, and more. Additional information about the dataset and the project can be found on the [project's GitHub page](https://github.com/xieenze/Segment_Transparent_Objects).
 
 <table align="center" style="border-collapse: collapse;">
   <tr>
@@ -111,7 +111,7 @@ Exiting the environment:
 deactivate
 ```
 
-
 ## References
-
-- [1] Xie, W. Wang, W. Wang, M. Ding, C. Shen, and P. Luo, “Segmenting transparent objects in the wild,” arXiv preprint arXiv:2003.13948, 2020.
+- [1] G. Jocher and J. Qiu, “Ultralytics yolo11,” 2024. [Online]. Available: https:
+//github.com/ultralytics/ultralytics
+- [2] Xie, W. Wang, W. Wang, M. Ding, C. Shen, and P. Luo, “Segmenting transparent objects in the wild,” arXiv preprint arXiv:2003.13948, 2020.
