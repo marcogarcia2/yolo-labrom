@@ -26,7 +26,6 @@ This undergraduate research is conducted at LabRoM (Laboratório de Robótica M�
 ## The Project
 
 ### Motivation
-
 Autonomous robots rely on various sensors to navigate their environment safely. One of the most commonly used sensors today is LiDAR, a laser-based technology that generates a 3D map of the surroundings by measuring light reflection. However, a significant challenge with LiDAR is its difficulty in detecting transparent surfaces. Since light passes through these surfaces, LiDAR struggles to accurately map or identify them, which can lead to crashes and damage to the robot.
 
 <p align="center">
