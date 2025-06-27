@@ -103,8 +103,9 @@ def polygon_visual_inspection(images_folder: str, labels_folder: str, n: int=5):
 
 
 def concat_videos(path1: str, path2: str):
+    
     """
-    From 2 video paths, load and concatenate into a single video.
+    Load and concatenate two videos into a single one, side-by-side.
     """
 
     # Private helper function that concatenates each frame individually

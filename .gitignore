@@ -3,6 +3,7 @@
 **/images/
 **/labels/
 **/masks/
+**/spot_datasets/
 **/__pycache__/
 **/yolo_env/
 Icon*
