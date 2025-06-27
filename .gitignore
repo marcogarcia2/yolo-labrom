@@ -4,6 +4,7 @@
 **/labels/
 **/masks/
 **/spot_datasets/
+*spot_datasets.zip
 **/__pycache__/
 **/yolo_env/
 Icon*
