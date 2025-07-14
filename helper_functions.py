@@ -276,6 +276,6 @@ def create_video_from_predictions(model_path, frames_dir, output_path, fps, conf
 
     # Frees the video writer object and saves the file
     video_writer.release()
-    print("\nProcesso concluído com sucesso!")
-    print(f"Vídeo salvo em: {output_path}")
+    print("\nProcess concluded.")
+    print(f"Video saved in: {output_path}")
 
