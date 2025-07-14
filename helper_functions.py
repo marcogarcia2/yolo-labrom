@@ -3,6 +3,11 @@ import cv2
 import os
 import random
 import matplotlib.pyplot as plt
+from pathlib import Path
+import json
+from tqdm import tqdm
+import natsort
+from ultralytics import YOLO
     
 
 def generate_yolo_annotation(masks_paths: list, labels_path: str, class_id: int=0, epsilon: float=3.0):
@@ -140,12 +145,12 @@ def concat_videos(path1: str, path2: str):
     cap1 = cv2.VideoCapture(path1)
     if not cap1.isOpened():
         print(f"Erro ao abrir o arquivo de vídeo: {path1}")
-        exit()
+        return
 
     cap2 = cv2.VideoCapture(path2)
     if not cap2.isOpened():
         print(f"Erro ao abrir o arquivo de vídeo: {path2}")
-        exit()
+        return
 
     
     # Getting info about video1
@@ -175,21 +180,21 @@ def concat_videos(path1: str, path2: str):
 
     # Creating the file name
     basename = os.path.basename(path1)
-    out_path = "out/mergerd_" + basename
+    out_path = "out/merged_" + basename
 
     # Removing previous video
     if os.path.exists(out_path):
         try:
             os.remove(out_path)
         except OSError as e:
-            print(f"Erro ao remover o vídeo anterior '{out_path}': {e}")
+            print(f"Error removing previous video '{out_path}': {e}")
 
     # Output video parameters
     bar = 100
     width = width1 + width2
     height = max(height1, height2) + bar
     fps = fps1
-    fourcc = cv2.VideoWriter_fourcc(*'avc1') # Tente este para H.264
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(out_path, fourcc, fps, (width, height))
 
     # While loop that join and save frames 
@@ -211,4 +216,169 @@ def concat_videos(path1: str, path2: str):
     if out is not None:
         out.release()
 
+    print(out_path)
     return out_path
+
+
+
+
+def create_video_from_predictions(model_path, frames_dir, output_path, fps, conf):
+    """
+    Run YOLO predictions in a sequence of frames and creates a video from its results.
+    """
+
+    # Loads the chosen YOLO model
+    print(f"Loading model: {model_path}...")
+    try:
+        model = YOLO(model_path)
+    except Exception as e:
+        print(f"Error loading YOLO model: {e}")
+        return
+
+    # Find and sorts the frames
+    print(f"Finding and sorting frames in: {frames_dir}...")
+    try:
+        frame_files = natsort.natsorted([p for p in frames_dir.glob("*.png")], key=lambda x: x.name)
+        if not frame_files:
+            print("Error: No .png file found in the specified directory.")
+            return
+    except FileNotFoundError:
+        print(f"Error: Input directory not found: {frames_dir}")
+        return
+
+    print(f"{len(frame_files)} frames found.")
+
+    # The first frame's dimensions will be the video dimensions 
+    first_frame = cv2.imread(str(frame_files[0]))
+    height, width, _ = first_frame.shape
+
+    # Starts VideoWriter and sets .mp4 codec
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    video_writer = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+
+    if not video_writer.isOpened():
+        print(f"Error: Couldn't write video file: {output_path}")
+        return
+
+    
+    # Main loop: processing each frame
+    for frame_path in tqdm(frame_files, desc="Processing Frames"):
+        
+        # Predicts current frame
+        results = model.predict(source=str(frame_path), conf=conf, verbose=False)
+        
+        # Pega o frame resultante com as anotações desenhadas
+        # results[0].plot() returns the image as an NumPy array in BGR color format (good for cv2)
+        annotated_frame = results[0].plot()
+        
+        # Appends the frame to the video
+        video_writer.write(annotated_frame)
+
+    # Frees the video writer object and saves the file
+    video_writer.release()
+    print("\nProcesso concluído com sucesso!")
+    print(f"Vídeo salvo em: {output_path}")
+
+
+
+
+
+
+# TODO: Delete it or comment (Unused for now)
+def convert_yolo_to_coco(image_dir, label_dir, output_path):
+    """
+    Converts YOLO format segmentation annotations to COCO format.
+    This version includes ALL images from the image_dir in the final JSON,
+    but only creates annotations for images that have a corresponding label file.
+    """
+    coco_output = {
+        "info": {"description": "Anotacoes geradas por codigo (by Marcola)"},
+        "licenses": [],
+        "images": [],
+        "annotations": [],
+        "categories": []
+    }
+
+    category_names = ["glass"]
+
+    # Populate the categories section
+    for i, name in enumerate(category_names):
+        coco_output["categories"].append({
+            "id": i+1,
+            "name": name,
+            "supercategory": "object"
+        })
+
+    annotation_id_counter = 1
+
+    # --- CORRECTED LOGIC: Iterate through ALL image files first ---
+    image_files = sorted([p for p in image_dir.iterdir() if p.suffix.lower() in ['.jpg', '.png']])
+
+    # Use enumerate to get a sequential ID for every image
+    for image_id, image_path in enumerate(image_files):
+        #print(f"Processing image {image_id + 1}/{len(image_files)}: {image_path.name}")
+
+        # Get image dimensions
+        image = cv2.imread(str(image_path))
+        if image is None:
+            print(f"  [WARNING] Could not read image, skipping: {image_path.name}")
+            continue
+        height, width, _ = image.shape
+
+        # Add the image info to the COCO structure, regardless of whether it has a label.
+        # This ensures all images are in the dataset and have the correct ID.
+        image_info = {
+            "id": image_id,
+            "file_name": image_path.name,
+            "width": width,
+            "height": height
+        }
+        coco_output["images"].append(image_info)
+
+        # Now, check if a corresponding label file exists for this image.
+        label_path = label_dir / (image_path.stem + ".txt")
+        if label_path.exists():
+            print(f"  -> Annotation found. Processing labels...")
+            # If the label exists, process it and add annotations.
+            with open(label_path, 'r') as f:
+                for line in f:
+                    parts = line.strip().split()
+                    normalized_coords = np.array([float(p) for p in parts[1:]])
+                    
+                    # De-normalize coordinates
+                    polygon_points = normalized_coords.reshape(-1, 2)
+                    polygon_points[:, 0] *= width
+                    polygon_points[:, 1] *= height
+                    polygon_points = polygon_points.astype(np.int32)
+
+                    segmentation = [polygon_points.flatten().tolist()]
+                    
+                    # Calculate bbox and area from the polygon
+                    x_coords, y_coords = polygon_points[:, 0], polygon_points[:, 1]
+                    x_min, y_min = np.min(x_coords), np.min(y_coords)
+                    x_max, y_max = np.max(x_coords), np.max(y_coords)
+                    
+                    bbox = [int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min)]
+                    area = cv2.contourArea(polygon_points)
+
+                    # Add annotation info, using the correct image_id from the main loop
+                    annotation_info = {
+                        "id": annotation_id_counter,
+                        "image_id": image_id, # This now correctly links to the image in the full list
+                        "category_id": 1,
+                        "segmentation": segmentation,
+                        "area": float(area),
+                        "bbox": bbox,
+                        "iscrowd": 0
+                    }
+                    coco_output["annotations"].append(annotation_info)
+                    annotation_id_counter += 1
+        else:
+            continue
+            #print(f"  -> No annotation found.")
+
+    # Save the final JSON file
+    print(f"\nConversion complete. Saving file to: {output_path}")
+    with open(output_path, 'w') as f:
+        json.dump(coco_output, f, indent=2)
+    print("File saved successfully!")

@@ -12,3 +12,6 @@ Icon*
 **/predict_n/
 **/predict_s/
 **/out/
+
+**sam2_outputs/
+**my_annotations/
