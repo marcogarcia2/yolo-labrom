@@ -222,7 +222,7 @@ def concat_videos(path1: str, path2: str):
 
 
 
-def create_video_from_predictions(model_path, frames_dir, output_path, fps, conf):
+def create_video_from_predictions(model_path: str, frames_dir: str, output_path: str, fps: float, conf: float):
     """
     Run YOLO predictions in a sequence of frames and creates a video from its results.
     """
