@@ -24,6 +24,7 @@ def make_predictions(model_path: str, source_folder: str, device: str, conf: flo
     print(cf.bold_yellow(f"--- Using YOLOv11{model_char} ---\n"))
     
     for file in os.listdir(source_folder):
+        
         # If it is a video
         if file.endswith((video_ext)):
             source_video = source_folder + file
