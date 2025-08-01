@@ -144,12 +144,12 @@ def concat_videos(path1: str, path2: str):
 
     cap1 = cv2.VideoCapture(path1)
     if not cap1.isOpened():
-        print(f"Erro ao abrir o arquivo de vídeo: {path1}")
+        print(f"Error opening video file: {path1}")
         return
 
     cap2 = cv2.VideoCapture(path2)
     if not cap2.isOpened():
-        print(f"Erro ao abrir o arquivo de vídeo: {path2}")
+        print(f"Error opening video file: {path2}")
         return
 
     
@@ -167,16 +167,20 @@ def concat_videos(path1: str, path2: str):
     total_frames2 = int(cap2.get(cv2.CAP_PROP_FRAME_COUNT)) # Opcional, para mostrar progresso
     print(f"Video 2: {width2}x{height2} @ {fps2:.2f} FPS, Total frames: {total_frames2}")
 
+    # Security checking
     if fps1 != fps2: 
         print(f"Error: both videos must have the same FPS ({fps1} and {fps2}).")
         exit()
 
+    if total_frames1 != total_frames2:
+        print(f"Error: both videos must have the same amount of frames ({total_frames1} and {total_frames2}).")
+        exit()
 
     # Creating directory or ignoring if it already exists
     try:
         os.makedirs("out", exist_ok=True)
     except OSError as e:
-        print(f"Erro ao criar o diretório 'out': {e}")
+        print(f"Error creating directory 'out': {e}")
 
     # Creating the file name
     basename = os.path.basename(path1)
