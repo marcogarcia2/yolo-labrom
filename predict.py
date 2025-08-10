@@ -14,13 +14,19 @@ video_ext = (".MOV", ".mov",
              ".MP4", ".mp4",
              ".avi", ".AVI")
 
+# def debug(model_path: str, model_char: str, source_folder: str, device: str, conf: float):
+#     print()
+#     print(cf.bold_green("Model Path:"), model_path)
+#     print(cf.bold_green("Model Char:"), model_char)
+#     print(cf.bold_green("Source Folder:"), source_folder)
+#     print(cf.bold_green("Confidence:"), conf)
+
 # Make predictions for all files in source folder, given a model
-def make_predictions(model_path: str, source_folder: str, device: str, conf: float):
+def make_predictions(model_path: str, model_char: str, source_folder: str, device: str, conf: float):
     
     # Loading model and sending it to GPU
     model = YOLO(model_path)
     model.to(device)
-    model_char = Path(model_path).stem.split('-')[0][-1]
     print(cf.bold_yellow(f"--- Using YOLOv11{model_char} ---\n"))
     
     for file in os.listdir(source_folder):
@@ -103,17 +109,54 @@ def make_video_predictions(model: YOLO, model_char: str, source: str, conf: floa
 
 def main():
 
+    # Checking GPU availability
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print(f"Using: {device}\n")
 
-    model_paths = ["models/yolo11n-seg-trained.pt",
-                   "models/yolo11s-seg-trained.pt"]
+    print(cf.bold_green("-----------------------------------------------------"))
+    print(cf.bold_white(" PREDICTIONS WITH TRAINED YOLO11 SEGMENTATION MODELS"))
+    print(cf.bold_green("-----------------------------------------------------\n"))
+
+    print(cf.bold_orange("Device: ") + cf.bold_white(device) + "\n")
+
+    print(cf.bold_orange("N") + cf.white(" --> Nano"))
+    print(cf.bold_orange("S") + cf.white(" --> Small"))
+    print(cf.bold_orange("M") + cf.white(" --> Medium"))
+    print(cf.bold_orange("L") + cf.white(" --> Large"))
+    print(cf.bold_orange("X") + cf.white(" --> Extra Large\n"))
+
+    # Taking user's input
+    user_input = input(("Enter the model letters to train: "))
+
+    # Treating the input
+    models_to_predict = "".join(set(user_input.replace(" ", "").upper()))
+
+    # Parameters
+    CONF = 0.5
+    SOURCE_FOLDER = "my_test_images/"
+    models = {'N': 'models/yolo11n-seg-trained.pt',
+              'S': 'models/yolo11s-seg-trained.pt',
+              'M': 'models/yolo11m-seg-trained.pt',
+              'L': 'models/yolo11l-seg-trained.pt',
+              'X': 'models/yolo11x-seg-trained.pt'}
     
-    conf = 0.5
-    source_folder = "my_test_images/"
+    # Predicting with all selected models
 
-    for model_path in model_paths:
-        make_predictions(model_path, source_folder, device, conf)
+    if ('N' in models_to_predict):
+        make_predictions(models['N'], 'n', SOURCE_FOLDER, device, CONF)
+    
+    if ('S' in models_to_predict):
+        make_predictions(models['S'], 's', SOURCE_FOLDER, device, CONF)
+    
+    if ('M' in models_to_predict):
+        make_predictions(models['M'], 'm', SOURCE_FOLDER, device, CONF)
+    
+    if ('L' in models_to_predict):
+        make_predictions(models['L'], 'l', SOURCE_FOLDER, device, CONF)
+    
+    if ('X' in models_to_predict):
+        make_predictions(models['X'], 'x', SOURCE_FOLDER, device, CONF)
+    
+
 
 if __name__ == "__main__":
     main()

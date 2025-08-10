@@ -3,6 +3,9 @@
 **/images/
 **/labels/
 **/masks/
+
+**/spot_annotations/
+
 **/spot_datasets/
 *spot_datasets.zip
 **/__pycache__/
