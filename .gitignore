@@ -4,7 +4,10 @@
 **/labels/
 **/masks/
 
+*dataset.zip
+
 **/spot_annotations/
+*spot_annotations.zip
 
 **/spot_datasets/
 *spot_datasets.zip
