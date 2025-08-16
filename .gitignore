@@ -5,6 +5,7 @@
 **/masks/
 
 *dataset.zip
+**/runs/
 
 **/spot_annotations/
 *spot_annotations.zip
