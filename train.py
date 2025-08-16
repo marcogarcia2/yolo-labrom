@@ -54,9 +54,7 @@ def main():
     # Checking GPU availability
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    print(cf.bold_green("-------------------------------------"))
     print(cf.bold_white(" TRAINING YOLO11 SEGMENTATION MODELS"))
-    print(cf.bold_green("-------------------------------------\n"))
 
     print(cf.bold_orange("Device: ") + cf.bold_white(device) + "\n")
 
@@ -74,23 +72,23 @@ def main():
 
     # Training all selected models
     
-    if ('N' in models_to_train):
+    if 'N' in models_to_train:
         train_model('yolo11n-seg.pt', 'n', device) # nano
 
 
-    if ('S' in models_to_train):
+    if 'S' in models_to_train:
         train_model('yolo11s-seg.pt', 's', device) # small
 
     
-    if ('M' in models_to_train):
+    if 'M' in models_to_train:
         train_model('yolo11m-seg.pt', 'm', device) # medium
 
 
-    if ('L' in models_to_train):
+    if 'L' in models_to_train:
         train_model('yolo11l-seg.pt', 'l', device, batch=8, imgsz=512) # large
 
 
-    if ('X' in models_to_train):
+    if 'X' in models_to_train:
         train_model('yolo11x-seg.pt', 'x', device, epochs=400, batch=8, imgsz=512) # extra large
 
 
